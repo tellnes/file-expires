@@ -1,0 +1,20 @@
+{
+  "name": "file-expires",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christian Tellnes <christian@tellnes.no> (http://christian.tellnes.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "request": "~2.10.0",
+    "long-timeout": "0.0.1"
+  },
+  "description": "Get a notification when a file expires or changes.",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tellnes/file-expires.git"
+  }
+}
