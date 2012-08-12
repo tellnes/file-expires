@@ -133,7 +133,6 @@ HTTPFileExpirer.prototype.createReadStream = function(options) {
 
     lt.clearTimeout(this.expiresTimeout)
     this.expiresTimeout = lt.setTimeout(function() {
-      console.log('timeout')
       self.emit('expires')
     }, expires)
 
