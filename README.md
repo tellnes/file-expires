@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/tellnes/file-expires.png)](http://travis-ci.org/tellnes/file-expires)
 # File expires
 
 Get a notification when a file expires or changes.
