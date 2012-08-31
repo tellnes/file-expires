@@ -169,12 +169,18 @@ function FSFileExpirer(filename) {
 
   var self = this
 
-  this.watcher = fs.watch(filename, function(type) {
-    if (type !== 'change') return
+  try {
+    this.watcher = fs.watch(filename, function(type) {
+      if (type !== 'change') return
 
-    self.emit('change')
-    self.emit('expires')
-  })
+      self.emit('change')
+      self.emit('expires')
+    })
+  } catch(err) {
+    process.nextTick(function() {
+      self.emit('error', err)
+    })
+  }
 }
 inherits(FSFileExpirer, FileExpirer)
 exports.FSFileExpirer = FSFileExpirer
