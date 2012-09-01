@@ -17,14 +17,10 @@ function createFileExpirer(file, options, cb) {
   }
 
   if (isURL(file)) {
-    fe = new HTTPFileExpirer(file, options)
+    fe = new HTTPFileExpirer(file, options, cb)
   } else {
-    fe = new FSFileExpirer(file, options)
+    fe = new FSFileExpirer(file, options, cb)
   }
-
-  if (cb) fe.readFile(function() {
-    cb.apply(fe, arguments)
-  })
 
   return fe
 }
@@ -47,7 +43,7 @@ inherits(FileExpirer, EventEmitter)
 exports.FileExpirer = FileExpirer
 
 
-function HTTPFileExpirer(uri, options) {
+function HTTPFileExpirer(uri, options, cb) {
   FileExpirer.call(this)
   this.uri = url.parse(uri)
 
@@ -63,6 +59,8 @@ function HTTPFileExpirer(uri, options) {
     if (!self._needRequest) return
     self.createReadStream({ method: 'HEAD' })
   })
+
+  if (cb) this.readFile(cb)
 }
 inherits(HTTPFileExpirer, FileExpirer)
 exports.HTTPFileExpirer = HTTPFileExpirer
@@ -163,7 +161,7 @@ HTTPFileExpirer.prototype.destroy = function() {
   lt.clearTimeout(this.expiresTimeout)
 }
 
-function FSFileExpirer(filename) {
+function FSFileExpirer(filename, options, cb) {
   FileExpirer.call(this)
   this.filename = filename
 
@@ -177,10 +175,14 @@ function FSFileExpirer(filename) {
       self.emit('expires')
     })
   } catch(err) {
+    if (cb) return cb(err)
+
     process.nextTick(function() {
       self.emit('error', err)
     })
   }
+
+  if (cb) this.readFile(cb)
 }
 inherits(FSFileExpirer, FileExpirer)
 exports.FSFileExpirer = FSFileExpirer
