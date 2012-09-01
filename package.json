@@ -8,7 +8,7 @@
   "author": "Christian Tellnes <christian@tellnes.no> (http://christian.tellnes.com/)",
   "license": "MIT",
   "dependencies": {
-    "request": "~2.10.0",
+    "request": "~2.11.0",
     "long-timeout": "0.0.1"
   },
   "description": "Get a notification when a file expires or changes.",
