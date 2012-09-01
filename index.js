@@ -1,5 +1,6 @@
 var request = require('request')
   , fs = require('fs')
+  , path = require('path')
   , EventEmitter = require('events').EventEmitter
   , inherits = require('util').inherits
   , url = require('url')
@@ -163,12 +164,16 @@ HTTPFileExpirer.prototype.destroy = function() {
 
 function FSFileExpirer(filename, options, cb) {
   FileExpirer.call(this)
+
+  options = options || {}
+
   this.filename = filename
+  if (options.cwd) this.filename = path.resolve(options.cwd, this.filename)
 
   var self = this
 
   try {
-    this.watcher = fs.watch(filename, function(type) {
+    this.watcher = fs.watch(this.filename, function(type) {
       if (type !== 'change') return
 
       self.emit('change')
