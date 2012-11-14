@@ -9,7 +9,8 @@
   "license": "MIT",
   "dependencies": {
     "request": "~2.11.0",
-    "long-timeout": "0.0.1"
+    "long-timeout": "0.0.1",
+    "debug": "~0.7.0"
   },
   "description": "Get a notification when a file expires or changes.",
   "devDependencies": {},
