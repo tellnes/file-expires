@@ -36,6 +36,7 @@ var URL = /^((http|udp|ftp)s?:\/\/)?([a-zA-Z1-90-]{2,}\.)+?([a-zA-Z1-90-]{2,6})(
 function isURL(str) {
   return URL.test(str)
 }
+exports.isURL = isURL
 
 
 
