@@ -49,7 +49,7 @@ exports.FileExpirer = FileExpirer
 
 function HTTPFileExpirer(uri, options, cb) {
   FileExpirer.call(this)
-  this.uri = url.parse(uri)
+  this.uri = uri
 
   options = options || {}
 
@@ -71,7 +71,7 @@ exports.HTTPFileExpirer = HTTPFileExpirer
 
 
 HTTPFileExpirer.prototype.readFile = function(encoding, callback) {
-  debugHttp('read file', this.uri.href)
+  debugHttp('read file', this.uri)
 
   if (arguments.length == 1) {
     callback = encoding
@@ -101,7 +101,7 @@ HTTPFileExpirer.prototype.readFile = function(encoding, callback) {
 }
 
 HTTPFileExpirer.prototype.createReadStream = function(options) {
-  debugHttp('create read stream', this.uri.href)
+  debugHttp('create read stream', this.uri)
 
   options = extend({}, options)
   options.uri = this.uri
@@ -112,7 +112,7 @@ HTTPFileExpirer.prototype.createReadStream = function(options) {
     , self = this
 
   req.on('response', function(res) {
-    debugHttp('got response', this.uri.href)
+    debugHttp('got response', self.uri)
 
     var expires = -Infinity
       , now = Date.now()
@@ -139,11 +139,11 @@ HTTPFileExpirer.prototype.createReadStream = function(options) {
     expires = expires - now
     if (expires <= self.minTimeout) expires = self.minTimeout
 
-    debugHttp('expires %s', new Date(now + expires), self.uri.href)
+    debugHttp('expires %s', new Date(now + expires), self.uri)
 
     lt.clearTimeout(this.expiresTimeout)
     this.expiresTimeout = lt.setTimeout(function() {
-      debugHttp('expires', self.uri.href)
+      debugHttp('expires', self.uri)
       self.emit('expires')
     }, expires)
 
@@ -164,7 +164,7 @@ HTTPFileExpirer.prototype.createReadStream = function(options) {
 
 
     if (changed) {
-      debugHttp('changed', this.uri.href)
+      debugHttp('changed', self.uri)
       self.emit('change')
     }
 
@@ -174,25 +174,27 @@ HTTPFileExpirer.prototype.createReadStream = function(options) {
 }
 
 HTTPFileExpirer.prototype.destroy = function() {
-  debugHttp('destroy', self.uri.href)
+  debugHttp('destroy', self.uri)
   lt.clearTimeout(this.expiresTimeout)
 }
 
-function FSFileExpirer(filename, options, cb) {
+
+
+function FSFileExpirer(uri, options, cb) {
   FileExpirer.call(this)
 
   options = options || {}
 
-  this.filename = filename
-  if (options.cwd) this.filename = path.resolve(options.cwd, this.filename)
+  if (options.cwd) uri = path.resolve(options.cwd, uri)
+  this.uri = uri
 
   var self = this
 
   try {
-    this.watcher = fs.watch(this.filename, function(type) {
+    this.watcher = fs.watch(this.uri, function(type) {
       if (type !== 'change') return
 
-      debugFs('got change notification', self.filename)
+      debugFs('got change notification', self.uri)
 
       self.emit('change')
       self.emit('expires')
@@ -212,22 +214,22 @@ exports.FSFileExpirer = FSFileExpirer
 
 
 FSFileExpirer.prototype.readFile = function(encoding, callback) {
-  debugFs('read file', this.filename)
+  debugFs('read file', this.uri)
 
   if (arguments.length == 1) {
-    return fs.readFile(this.filename, encoding)
+    return fs.readFile(this.uri, encoding)
   }
 
-  return fs.readFile(this.filename, encoding, callback)
+  return fs.readFile(this.uri, encoding, callback)
 }
 
 FSFileExpirer.prototype.createReadStream = function(options) {
-  debugFs('create read stream', this.filename)
+  debugFs('create read stream', this.uri)
 
-  return fs.createReadStream(this.filename, options)
+  return fs.createReadStream(this.uri, options)
 }
 
 FSFileExpirer.prototype.destroy = function() {
-  debugHttp('destroy', self.filename)
+  debugHttp('destroy', self.uri)
   this.watcher.close()
 }
