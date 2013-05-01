@@ -174,7 +174,7 @@ HTTPFileExpirer.prototype.createReadStream = function(options) {
 }
 
 HTTPFileExpirer.prototype.destroy = function() {
-  debugHttp('destroy', self.uri)
+  debugHttp('destroy', this.uri)
   lt.clearTimeout(this.expiresTimeout)
 }
 
@@ -230,6 +230,6 @@ FSFileExpirer.prototype.createReadStream = function(options) {
 }
 
 FSFileExpirer.prototype.destroy = function() {
-  debugHttp('destroy', self.uri)
+  debugHttp('destroy', this.uri)
   this.watcher.close()
 }
